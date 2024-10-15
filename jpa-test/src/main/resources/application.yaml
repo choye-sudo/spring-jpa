@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/data1?serverTimezone=Asia/Seoul
+    username: root
+    password: dPdmsdk?0928
+  jpa:
+    hibernate:
+      ddl-auto: create
+    #      create = drop -> create
+    #     create-drop = drop -> create -> drop
+    #     update = create -> alter (???? ??? ???? ???)
+    #     none = x
+    show-sql: true
