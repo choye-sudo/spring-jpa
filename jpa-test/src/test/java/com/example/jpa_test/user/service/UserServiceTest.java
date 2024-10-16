@@ -2,10 +2,9 @@ package com.example.jpa_test.user.service;
 
 import com.example.jpa_test.user.domain.User;
 import com.example.jpa_test.user.repository.UserRepository;
+import com.example.jpa_test.user.request.UserRequest;
 import com.example.jpa_test.user.response.UserResponse;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
@@ -24,30 +23,45 @@ class UserServiceTest {
 
     @Test
     void updateUser() {
+        User user = users.get(0);
+        UserRequest request = new UserRequest(user.getEmail(), user.getPassword(), user.getUsername());
+        UserResponse response = userService.updateUser(user.getId(), request);
+
+        assertNotNull(response);
+        User after = userRepository.findById(user.getId()).get();
+        assertEquals((request.password()));
 
     }
 
     @Test
     void deleteUserById() {
+        userService.deleteUserById(1L);
+
+        assertFalse(userRepository.findById(1L).isPresent());
     }
 
-    @Test
-    void getUserById()
-    {
-        Long id = users.get(0).getId();
+    @Nested
+    class GetUserByID {
+        @Test
+        @DisplayName("성공")
+        void getUserById()
+        {
+            Long id = users.get(0).getId();
 
-        UserResponse userById = userService.getUserById(id);
+            UserResponse userById = userService.getUserById(id);
 
-        assertNotNull(userById);
-        assertEquals(id, userById.id());
-        assertEquals(users.get(0).getEmail(), userById.email());
-    }
+            assertNotNull(userById);
+            assertEquals(id, userById.id());
+            assertEquals(users.get(0).getEmail(), userById.email());
+        }
 
-    @Test
-    void getUserById_failure_not_found()
-    {
-        Long id = users.get(0).getId();
-        assertThrows(NoSuchElementException.class, ()-> userService.getUserById(id));
+        @Test
+        @DisplayName("실패 : 못 찾은 경우 NoSuchElementException 발생")
+        void getUserById_failure_not_found()
+        {
+            Long id = users.get(0).getId();
+            assertThrows(NoSuchElementException.class, ()-> userService.getUserById(id));
+        }
     }
 
     @Test

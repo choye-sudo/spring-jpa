@@ -6,10 +6,8 @@ public record UserRequest(
         String email,
         String password,
         String username
-)
-{
-    public User toEntity()
-    {
+) {
+    public User toEntity(){
         return User.builder()
                 .email(email)
                 .password(password)

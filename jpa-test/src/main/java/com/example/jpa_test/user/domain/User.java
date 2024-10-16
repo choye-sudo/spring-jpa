@@ -1,12 +1,12 @@
 package com.example.jpa_test.user.domain;
 
+import ch.qos.logback.core.util.StringUtil;
 import com.example.jpa_test.store.domain.Store;
+import com.example.jpa_test.user.request.UserRequest;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,14 +14,14 @@ import java.util.List;
 @Table(
         name = "USERS",
         indexes = {
-                @Index(columnList="email"),
+                @Index(columnList = "email"),
                 @Index(columnList = "username")
         }
 )
-@Builder
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class User {
     @Id @Column(name = "USER_ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,8 +32,20 @@ public class User {
     private String password;
     @Column(length = 10, nullable = false)
     private String username;
-
-    @OneToMany(mappedBy = "user")
+    //   fetch = FetchType.EAGER
+//    fetch = FetchType.LAZY default
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @Builder.Default
     private List<Store> stores = new ArrayList<>();
+
+
+
+
+
+    public void update(UserRequest request){
+        if(!StringUtil.isNullOrEmpty(request.password()))
+            this.password = request.password();
+        if(!StringUtil.isNullOrEmpty(request.username()))
+            this.username = request.username();
+    }
 }
